@@ -44,7 +44,7 @@ function InvestmentCalculator() {
         const monthlyContribution = parseFloat(document.getElementById('monthly-contribution').value);
       
         const totalInvestment = (initialInvestment * (Math.pow(1 + annualReturn / 100, investmentPeriod))) +
-    (monthlyContribution * ((Math.pow(1 + (annualReturn / 100), investmentPeriod) - 1) / (annualReturn / 100)));
+    (12*monthlyContribution *(Math.pow(1 + (annualReturn / 100), investmentPeriod) - 1) / (annualReturn / 100));
       
         const result = `Hey ${userName}. You have chosen to invest in ${investmentType}. Over a period of ${investmentPeriod} years, and with an annual return rate of ${annualReturn}%, your total investment is going to be $${totalInvestment.toFixed(2)}.`;
       
