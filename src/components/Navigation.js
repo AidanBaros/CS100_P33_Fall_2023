@@ -7,14 +7,24 @@ export default function Navigation() {
     
     <nav class="bg-white dark:bg-white fixed w-full top-0 left-0 border-b border-gray-300 shadow-xl">
         <div class="max-w-screen-2xl flex flex-wrap items-center justify-between mx-auto p-4">
-            <a class="flex items-center ml-20">
+            <button class="flex items-center ml-20">
                 <span class="self-center text-3xl whitespace-nowrap dark:text-black font-bold">FinTech™</span>
-            </a>
-            <div class="flex md:order-2 mr-14">
-            <button type="button" class="hover:ring-4 flex flex-row text-black bg-[#00A67E]  focus:outline-none font-medium rounded-lg text-sm px-5 py-1.5 text-center items-center ">
-                <img className="w-7 mr-1" src={chatGptIcon}/>
-                Utilize our AI tools
             </button>
+            <div class="flex md:order-2 mr-14">
+            
+
+            <div class="relative inline-flex  group">
+            <div
+                class="absolute transitiona-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt">
+            </div>
+            <a href="#" title="Get quote now"
+                class="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-black transition-all duration-200 bg-[#00A67E] font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                role="button">
+                <img className="w-8 mr-2" src={chatGptIcon}/>
+                Utlize our AI Tools
+            </a>
+            </div>
+            
             </div>
             <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1 text-[17px]">
                 <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-200 md:dark:bg-white dark:border-gray-700">
