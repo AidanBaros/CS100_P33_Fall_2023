@@ -46,8 +46,6 @@ function InvestmentCalculator() {
     const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
     const [investmentType, setInvestmentType] = useState('');
     const [annualReturn, setAnnualReturn] = useState('');
-    const [userName, setUserName] = useState('');
-    const [userAge, setUserAge] = useState('');
     const [investmentPeriod, setInvestmentPeriod] = useState('');
     const [initialInvestment, setInitialInvestment] = useState('');
     const [monthlyContribution, setMonthlyContribution] = useState('');
@@ -106,7 +104,6 @@ function InvestmentCalculator() {
             setResultSentence(resultBasic);
         } else {
             
-            const userName = document.getElementById('user_name').value;
             const initialInvestment = parseFloat(document.getElementById('initial_investment').value);
             const monthlyContribution = parseFloat(document.getElementById('monthly-contribution').value);
             const investmentPeriod = parseInt(document.getElementById('investment-period').value, 10);
@@ -118,7 +115,7 @@ function InvestmentCalculator() {
             const totalInvestmentAdvanced = (initialInvestment * (Math.pow(1 + annualReturn / 100, investmentPeriod))) +
             (12*monthlyContribution *(Math.pow(1 + (annualReturn / 100), investmentPeriod) - 1) / (annualReturn / 100));
 
-            const resultAdvanced = `Hey ${userName}. You have chosen to invest in ${investmentType}. Over a period of ${investmentPeriod} years, and with an annual return rate of ${annualReturn}%, your total investment is going to be $${totalInvestmentAdvanced.toLocaleString()}`;
+            const resultAdvanced = `Hey, you have chosen to invest in ${investmentType}. Over a period of ${investmentPeriod} years, and with an annual return rate of ${annualReturn}%, your total investment is going to be $${totalInvestmentAdvanced.toLocaleString()}`;
 
             setResultSentence(resultAdvanced);
         }
@@ -155,15 +152,15 @@ function InvestmentCalculator() {
                     <>
                     <div class="w-[95%] justify-center items-center m-auto">
                 
-                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Name</label>
-                        <input onChange={(e) => setUserName(e.target.value)} type="text" id="user_name" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="First Name"/>
-
-                        <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Age</label>
-                        <input onChange={(e) => setUserAge(e.target.value)} type="text" id="user_age" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Age"/>
-
                         <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Initial Investment</label>
                         <input onChange={(e) => setInitialInvestment(e.target.value)} type="text" id="initial_investment" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="$1000"/>
                         
+                        <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monthly Contribution</label>
+                        <input onChange={(e) => setInitialInvestment(e.target.value)} type="text" id="monthly-contribution" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="$100"/>
+
+                        <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Investment period (years)</label>
+                        <input onChange={(e) => setInvestmentPeriod(e.target.value)} type="text" id="investment-period" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="e.g 2"/>
+
                         <label class="mt-4 block mb-3 text-sm font-medium text-gray-900 dark:text-white"> Type of Investment</label>
                         <button onClick={() => handleInvestmentTypeChange('S&P 500')} class="bg-blue-100 text-blue-800 text-[14px] font-medium mr-2 px-3.5 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300 hover:ring-2 ring-blue-800">S&P 500</button>
                         <button onClick={() => handleInvestmentTypeChange('Roth IRA')} class="bg-purple-100 text-purple-800 text-[14px] font-medium mr-2 px-3.5 py-1.5 rounded-full dark:bg-purple-900 dark:text-purple-300 hover:ring-2 ring-purple-800">Roth IRA</button>
@@ -174,15 +171,8 @@ function InvestmentCalculator() {
                         <button onClick={() => handleInvestmentTypeChange('Bonds')} class="bg-pink-100 text-pink-800 text-[14px] font-medium mr-2 px-3.5 py-1.5 rounded-full dark:bg-pink-900 dark:text-pink-300 hover:ring-2 ring-pink-800">Bonds</button>
                         <button onClick={() => handleInvestmentTypeChange('Custom')} class="bg-pink-100 text-pink-800 text-[14px] font-medium mr-2 px-3.5 py-1.5 rounded-full dark:bg-orange-800 dark:text-pink-300 hover:ring-2 ring-pink-800 my-4">Custom</button>
 
-                        <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monthly Contribution</label>
-                        <input onChange={(e) => setInitialInvestment(e.target.value)} type="text" id="monthly-contribution" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="$100"/>
-
                         <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Annual return</label>
                         <input onChange={(e) => setAnnualReturn(e.target.value)} type="text" id="annual-return" value={annualReturn} aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="e.g 5%"/>
-
-                        <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Investment period (years)</label>
-                        <input onChange={(e) => setInvestmentPeriod(e.target.value)} type="text" id="investment-period" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="e.g 2"/>
-
                     </div>
                     </>
                 ) : (
