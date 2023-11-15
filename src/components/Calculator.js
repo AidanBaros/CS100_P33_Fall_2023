@@ -2,36 +2,17 @@ import React, { useState } from 'react';
 import CashImg from '../images/Cash.jpg'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGear, faCircleArrowRight } from '@fortawesome/free-solid-svg-icons'
-
-import { Line } from "react-chartjs-2";
-import { Chart as ChartJS } from "chart.js/auto";
 import LineChart from './LineChart';
-
-
-
 
 function InvestmentCalculator() {
 
-    const UserData  = [
-        {
-          id: 1,
-          year: 1,
-          profit: 1000
-        },
-        {
-          id: 2,
-          year: 10,
-          profit: 100000
-        },
-      ];
-
-      const [userData, setUserData] = useState({
-        labels: UserData.map((data) => data.year),
+    const [userData, setUserData] = useState({
+        labels: [],
         datasets: [
           {
             label: 'Total Investment',
             tension: 0.1,
-            data: UserData.map((data) => data.profit),
+            data: [],
             backgroundColor: ['rgba(75,192,192,1)', '#ecf0f1', '#50AF95', '#f3ba2f', '#2a71d0'],
             borderColor: 'black',
             borderWidth: 3,
@@ -39,10 +20,6 @@ function InvestmentCalculator() {
         ],
       });
 
-    
-
-
-    
     const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
     const [investmentType, setInvestmentType] = useState('');
     const [annualReturn, setAnnualReturn] = useState('');
@@ -50,6 +27,7 @@ function InvestmentCalculator() {
     const [initialInvestment, setInitialInvestment] = useState('');
     const [monthlyContribution, setMonthlyContribution] = useState('');
     const [resultSentence, setResultSentence] = useState('');
+    const [timesAddedPerYear, setTimesAddedPerYear] = useState('');
     const [investmentData, setInvestmentData] = useState([]);
     const [showLineChart, setShowLineChart] = useState(false);
 
@@ -57,10 +35,10 @@ function InvestmentCalculator() {
     const handleInvestmentTypeChange = (type) => {
         setInvestmentType(type);
         if (type === 'S&P 500') {
-        setAnnualReturn('10.11');
+            setAnnualReturn('10.11');
         }
         else if (type === 'Roth IRA') {
-        setAnnualReturn('8.5');
+            setAnnualReturn('8.5');
         } 
         else if (type === 'Crypto') {
             setAnnualReturn('30.0');
@@ -85,45 +63,61 @@ function InvestmentCalculator() {
         }
     };
 
+    const handleContinuedContributionChange = (type) => {
+
+        if (type === 'Monthly') {
+            setTimesAddedPerYear('12');
+        }
+        else if (type === 'Bi-Monthly') {
+            setTimesAddedPerYear('6');
+        } 
+        else if (type === 'Quarterly') {
+            setTimesAddedPerYear('4');
+        }
+        else if (type === 'Tri-Annually') {
+            setTimesAddedPerYear('3');
+        }
+        else if (type === 'Bi-Annually') {
+            setTimesAddedPerYear('2');
+        }
+        else if (type === 'Annually') {
+            setTimesAddedPerYear('1');
+        }
+        else {
+            setTimesAddedPerYear('0');
+        }
+    };
+
     const handleCalculate = () => {
 
+        let newUserData;
+
         if (!showAdvancedSearch) {
+            setAnnualReturn('5')
+            newUserData = alwaysDisplay();
             
-            const initialInvestment = parseFloat(document.getElementById('initial_investment').value);
-            const monthlyContribution = parseFloat(document.getElementById('monthly-contribution').value);
-            const investmentPeriod = parseInt(document.getElementById('investment-period').value, 10);
-
-            const oneYearInvestmentBasic = (initialInvestment * (Math.pow(1 + annualReturn / 100, 1))) +
-            (12*monthlyContribution *(Math.pow(1 + (annualReturn / 100), 1) - 1) / (annualReturn / 100));
-            
-            const totalInvestmentBasic = (initialInvestment * (Math.pow(1 + 5 / 100, investmentPeriod))) +
-                (12 * monthlyContribution * (Math.pow(1 + (5 / 100), investmentPeriod) - 1) / (5 / 100));
-    
-            const resultBasic = `Good day. You have chosen to start with an initial investment of $${initialInvestment}, and a monthly contribution of $${monthlyContribution}. With an average annual return of 5%, and over a period of ${investmentPeriod} years, you are looking to make $${totalInvestmentBasic.toLocaleString()}`;
-    
-            setResultSentence(resultBasic);
         } else {
-            
-            const initialInvestment = parseFloat(document.getElementById('initial_investment').value);
-            const monthlyContribution = parseFloat(document.getElementById('monthly-contribution').value);
-            const investmentPeriod = parseInt(document.getElementById('investment-period').value, 10);
-
-
-            const oneYeatInvestmentAdvanced = (initialInvestment * (Math.pow(1 + annualReturn / 100, 1))) +
-            (12*monthlyContribution *(Math.pow(1 + (annualReturn / 100), 1) - 1) / (annualReturn / 100));
-    
-            const totalInvestmentAdvanced = (initialInvestment * (Math.pow(1 + annualReturn / 100, investmentPeriod))) +
-            (12*monthlyContribution *(Math.pow(1 + (annualReturn / 100), investmentPeriod) - 1) / (annualReturn / 100));
-
-            const resultAdvanced = `Hey, you have chosen to invest in ${investmentType}. Over a period of ${investmentPeriod} years, and with an annual return rate of ${annualReturn}%, your total investment is going to be $${totalInvestmentAdvanced.toLocaleString()}`;
-
-            setResultSentence(resultAdvanced);
+            newUserData = alwaysDisplay();
         }
 
         const resultSection = document.getElementById('result-section');
         if (resultSection) {
             resultSection.scrollIntoView({ behavior: 'smooth'});
         }
+
+        setUserData({
+            labels: newUserData.map((data) => data.year),
+            datasets: [
+                {
+                    label: 'Total Investment',
+                    tension: 0.1,
+                    data: newUserData.map((data) => data.profit),
+                    backgroundColor: 'black',
+                    borderColor: 'black',
+                    borderWidth: 3,
+              },
+            ],
+        });
 
         setShowLineChart(true);
 
@@ -155,11 +149,19 @@ function InvestmentCalculator() {
                         <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Initial Investment</label>
                         <input onChange={(e) => setInitialInvestment(e.target.value)} type="text" id="initial_investment" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="$1000"/>
                         
-                        <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monthly Contribution</label>
-                        <input onChange={(e) => setInitialInvestment(e.target.value)} type="text" id="monthly-contribution" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="$100"/>
-
                         <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Investment period (years)</label>
                         <input onChange={(e) => setInvestmentPeriod(e.target.value)} type="text" id="investment-period" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="e.g 2"/>
+
+                        <label class="mt-4 block mb-3 text-sm font-medium text-gray-900 dark:text-white"> Deposit Frequency</label>
+                        <button onClick={() => handleContinuedContributionChange('Monthly')} class="bg-blue-100 text-blue-800 text-[14px] font-medium mr-2 px-3.5 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300 hover:ring-2 ring-blue-800">Monthly</button>
+                        <button onClick={() => handleContinuedContributionChange('Bi-Monthly')} class="bg-purple-100 text-purple-800 text-[14px] font-medium mr-2 px-3.5 py-1.5 rounded-full dark:bg-purple-900 dark:text-purple-300 hover:ring-2 ring-purple-800">Bi-Monthly</button>
+                        <button onClick={() => handleContinuedContributionChange('Quarterly')} class="bg-red-100 text-red-800 text-[14px] font-medium mr-2 px-3.5 py-1.5 rounded-full dark:bg-red-900 dark:text-red-300 hover:ring-2 ring-red-800">Quarterly</button>
+                        <button onClick={() => handleContinuedContributionChange('Tri-Annually')} class="bg-green-100 text-green-800 text-[14px] font-medium mr-2 px-3.5 py-1.5 rounded-full dark:bg-green-900 dark:text-green-300 hover:ring-2 ring-green-800">Tri-Annually</button>
+                        <button onClick={() => handleContinuedContributionChange('Bi-Annually')} class="bg-yellow-100 text-yellow-800 text-[14px] font-medium mr-2 px-3.5 py-1.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300 hover:ring-2 ring-yellow-800">Bi-Annually</button>
+                        <button onClick={() => handleContinuedContributionChange('Annually')} class="bg-indigo-100 text-indigo-800 text-[14px] font-medium mr-2 px-3.5 py-1.5 rounded-full dark:bg-indigo-900 dark:text-indigo-300 hover:ring-2 ring-indigo-800">Annually</button>
+                        
+                        <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Continued Contribution</label>
+                        <input onChange={(e) => setInitialInvestment(e.target.value)} type="text" id="monthly-contribution" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="$100"/>
 
                         <label class="mt-4 block mb-3 text-sm font-medium text-gray-900 dark:text-white"> Type of Investment</label>
                         <button onClick={() => handleInvestmentTypeChange('S&P 500')} class="bg-blue-100 text-blue-800 text-[14px] font-medium mr-2 px-3.5 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300 hover:ring-2 ring-blue-800">S&P 500</button>
@@ -173,23 +175,22 @@ function InvestmentCalculator() {
 
                         <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Annual return</label>
                         <input onChange={(e) => setAnnualReturn(e.target.value)} type="text" id="annual-return" value={annualReturn} aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="e.g 5%"/>
+
                     </div>
                     </>
                 ) : (
                     <div class="w-[95%] justify-center items-center m-auto">
-                                           
+
                         <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Initial Investment</label>
                         <input type="text" id="initial_investment" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="$1000"/>
-
-                        <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monthly Contribution</label>
-                        <input type="text" id="monthly-contribution" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="$100"/>
-
+                    
                         <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Investment period (years)</label>
                         <input type="text" id="investment-period" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="e.g 2"/>
 
-                    </div>
-
+                    </div>  
+                    
                 )}
+                
 
                 <div className='flex flex-col'>
 
@@ -220,9 +221,96 @@ function InvestmentCalculator() {
             )}
             
         </div>
+
+                /*
+
+                        <label class="mt-4 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monthly Contribution</label>
+                        <input type="text" id="monthly-contribution" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="$100"/>
+
+                */
+
     )
+
+    function alwaysDisplay(){
+        let newUserData;
+        const initialInvestment = parseFloat(document.getElementById('initial_investment').value);
+        let monthlyContribution;
+        let isAdvanced = false;
+        let result;
+        if (document.getElementById('monthly-contribution') === null){
+            monthlyContribution = 0;
+        }
+        else{
+            isAdvanced = true;
+            monthlyContribution = parseFloat(document.getElementById('monthly-contribution').value);
+        }
+        const investmentPeriod = parseInt(document.getElementById('investment-period').value, 10);
+
+        const totalInvestment = (initialInvestment * (Math.pow(1 + annualReturn / 100, investmentPeriod))) +
+        (timesAddedPerYear*monthlyContribution *(Math.pow(1 + (annualReturn / 100), investmentPeriod) - 1) / (annualReturn / 100));
+
+        newUserData = [];
+
+        for (let i = 0; i < investmentPeriod; i++) { 
+            const yearAmmount = (initialInvestment * (Math.pow(1 + annualReturn / 100, (i+1)))) +
+            (timesAddedPerYear*monthlyContribution *(Math.pow(1 + (annualReturn / 100), (i+1)) - 1) / (annualReturn / 100));
+            newUserData.push({id:i, year:i+1, profit: yearAmmount});
+        }
+
+        if (isAdvanced && timesAddedPerYear !== '1'){
+            result = (
+                <div>
+                  <p>
+                    Good day. You have chosen to start with an initial investment of $
+                    <span className='text-blue-700 font-bold'>{initialInvestment}</span>, 
+                    and a contribution of $
+                    <span className='text-blue-700 font-bold'>{monthlyContribution} </span>
+                    <span>{timesAddedPerYear}</span> times a year.
+                    With an average annual return of <span className='font-style: italic text-red-500 font-bold'>{annualReturn}</span>%, 
+                    and over a period of <span style={{ textDecoration: 'underline' }}>{investmentPeriod}</span> years, 
+                    you are looking to make $
+                    <span style={{ fontWeight: 'bold', color: 'green' }}>{totalInvestment.toLocaleString()}</span>
+                  </p>
+                </div>
+            );
+        }
+        else if(isAdvanced){
+            result = (
+                <div>
+                  <p>
+                    Good day. You have chosen to start with an initial investment of $
+                    <span className='text-blue-700 font-bold'>{initialInvestment}</span>, 
+                    and a contribution of $
+                    <span className='text-blue-700 font-bold'>{monthlyContribution}</span> a year.
+                    With an average annual return of <span className='font-style: italic text-red-500 font-bold'>{annualReturn}</span>%, 
+                    and over a period of <span style={{ textDecoration: 'underline' }}>{investmentPeriod}</span> years, 
+                    you are looking to make $
+                    <span style={{ fontWeight: 'bold', color: 'green' }}>{totalInvestment.toLocaleString()}</span>
+                  </p>
+                </div>
+            );
+        }
+        else{
+            result = (
+                <div>
+                  <p>
+                    Good day. You have chosen to start with an initial investment of $
+                    <span className='text-blue-700 font-bold'>{initialInvestment}</span>.
+                    With an average annual return of <span className='font-style: italic text-red-500 font-bold'>{annualReturn}</span>%, 
+                    and over a period of <span style={{ textDecoration: 'underline' }}>{investmentPeriod}</span> years, 
+                    you are looking to make $
+                    <span style={{ fontWeight: 'bold', color: 'green' }}>{totalInvestment.toLocaleString()}</span>
+                  </p>
+                </div>
+            );
+        }
+        
+
+        setResultSentence(result);
+        return newUserData;
+    }
 }
 
+
+
 export default InvestmentCalculator
-
-
